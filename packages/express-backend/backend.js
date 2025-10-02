@@ -39,11 +39,25 @@ const findUserByName = (name) => {
     return users["users_list"].filter(
       (user) => user["name"] === name
     );
-  };
+};
+
+const findUserById = (id) => 
+    users["users_list"].find((user) => user["id"] === id);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+app.get("/users/:id", (req, res) => {
+    const id = req.params.id;
+    let result = findUserById(id);
+    if (result === undefined) {
+      res.status(404).send({ message: `user with id ${id} not found` });
+    } else {
+        res.send(result);
+    }
+  }
+);
 
 app.get("/users", (req, res) => {
     const name = req.query.name;
