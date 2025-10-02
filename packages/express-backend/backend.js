@@ -35,6 +35,12 @@ const users = {
 
 app.use(express.json());
 
+const deleteUser = (id) => {
+    users["users_list"] = users["users_list"].filter(
+      (user) => user["id"] !== id   // update users_list but exclude the user with the specified id
+    );
+}
+
 const addUser = (user) => {
     users["users_list"].push(user);
     return user;
@@ -56,7 +62,7 @@ app.get("/", (req, res) => {
 app.get("/users/:id", (req, res) => {
     const id = req.params.id;
     let result = findUserById(id);
-    if (result === undefined) {
+    if (result === undefined) { 
       res.status(404).send({ message: `user with id ${id} not found` });
     } else {
         res.send(result);
@@ -84,6 +90,20 @@ app.post("/users", (req, res) => {
     addUser(userToAdd);
     res.send();
     }
+);
+
+app.delete("/users/:id", (req, res) => {
+    const id = req.params.id;
+    const userExists = findUserById(id);
+    // check if the userid even exists first
+    if (userExists === undefined) {
+      res.status(404).send({ message: `user with id ${id} not found` });
+      return;
+    }
+
+    deleteUser(id);
+    res.send();
+  }
 );
 
 app.listen(port, () => {
