@@ -1,7 +1,11 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = 8000;
+
+app.use(cors());
+app.use(express.json());
 
 const users = {
     users_list: [
@@ -32,8 +36,6 @@ const users = {
       }
     ]
   };
-
-app.use(express.json());
 
 const deleteUser = (id) => {
     users["users_list"] = users["users_list"].filter(
@@ -88,7 +90,7 @@ app.get("/users", (req, res) => {
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
-    res.send();
+    res.status(201).send({ message: "user added", user: userToAdd });
     }
 );
 
@@ -102,7 +104,7 @@ app.delete("/users/:id", (req, res) => {
     }
 
     deleteUser(id);
-    res.send();
+    res.status(200).send({ message: `user with id ${id} deleted` });
   }
 );
 
