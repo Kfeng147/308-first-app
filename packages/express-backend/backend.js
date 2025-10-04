@@ -35,7 +35,12 @@ const users = {
         job: "Bartender"
       }
     ]
-  };
+};
+
+// P2, generate random ID
+function generateRandomId() {
+    return Math.random().toString(36).substring(2, 8);
+}
 
 const deleteUser = (id) => {
     users["users_list"] = users["users_list"].filter(
@@ -83,14 +88,11 @@ app.get("/users", (req, res) => {
     }
   });
 
-app.get("/users", (req, res) => {
-    res.send(users);
-  });
-
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
+    userToAdd["id"] = generateRandomId();   // P2, assign random id to the new user
     addUser(userToAdd);
-    res.status(201).send({ message: "user added", user: userToAdd });
+    res.status(201).send(userToAdd); // P1, send 201 and P3, send updated representation of object with new id
     }
 );
 
@@ -99,12 +101,12 @@ app.delete("/users/:id", (req, res) => {
     const userExists = findUserById(id);
     // check if the userid even exists first
     if (userExists === undefined) {
-      res.status(404).send({ message: `user with id ${id} not found` });
+      res.status(404).send({ message: `user with id ${id} not found` }); // P3, send 404 if user not found
       return;
     }
 
     deleteUser(id);
-    res.status(200).send({ message: `user with id ${id} deleted` });
+    res.status(204).send({ message: `user with id ${id} deleted` }); // P3, send 204 to represent successful deletion
   }
 );
 

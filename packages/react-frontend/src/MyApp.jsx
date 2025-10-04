@@ -6,16 +6,32 @@ import Form from "./Form";
 function MyApp() {
     const [characters, setCharacters] = useState([]);
 
-    function removeOneCharacter(index) {
-        const updated = characters.filter((character, i) => {
-            return i !== index;
-        });
-        setCharacters(updated);
+    // P3, change logic of removeOneCharacter to make DELETE request
+    function removeOneCharacter(id) {
+        deleteUser(id)
+            .then((res) => {
+                if (res.status === 404) // check if status code is 404 (user not found)
+                    console.log(`User with id ${id} not found`);
+                else if (res.status === 204)    // check if status code is 204 (successful deletion)
+                    setCharacters(characters.filter((user) => user.id !== id));
+                else
+                    console.log("Failed to delete user"); // test other status codes
+                    
+            })
+            .catch((error) => { console.log(error); });
     }
 
     function updateList(person) {
         postUser(person)
-            .then(() => setCharacters([...characters, person]))
+            .then((res) => {
+                if (res.status === 201) // check if status code is 201
+                    return res.json();
+                else
+                    console.log("Failed to add user"); // test other status codes
+            })
+            .then((newUser) => {
+                setCharacters([...characters, newUser]); // P3, update state with new user
+            })
             .catch((error) => { console.log(error); });
     }
 
@@ -31,6 +47,14 @@ function MyApp() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(user)
+        });
+        return promise;
+    }
+
+    // P3, fetch with method DELETE and appended ID to route URL
+    function deleteUser(id) {
+        const promise = fetch(`http://localhost:8000/users/${id}`, {
+            method: "DELETE"
         });
         return promise;
     }

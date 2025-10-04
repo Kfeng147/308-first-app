@@ -1,10 +1,12 @@
 // src/Table.jsx
+// P4, show ID column in table
 function TableHeader() {
     return (
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Job</th>
+            <th>ID</th> 
+            <th>Name</th>
+            <th>Job</th>
         </tr>
       </thead>
     );
@@ -14,10 +16,11 @@ function TableBody(props) {
     const rows = props.characterData.map((row, index) => {
         return (
             <tr key={index}>
+                <td>{row.id}</td>
                 <td>{row.name}</td>
                 <td>{row.job}</td>
                 <td>
-                    <button onClick={() => props.removeCharacter(index)}>
+                    <button onClick={() => props.removeCharacter(row.id)}>
                         Delete
                     </button>
                 </td>
